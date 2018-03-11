@@ -16,7 +16,7 @@
 - buy(interaction)
 - add to cart(interaction)
 
-### **3. Category page **
+### **3. Category page**
 
 - Showing picture with resolution of 950x100 of current product
 
