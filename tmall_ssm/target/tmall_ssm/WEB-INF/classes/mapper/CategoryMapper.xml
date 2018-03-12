@@ -10,7 +10,12 @@
             limit #{start},#{count}
         </if>
     </select>
+
     <select id="total" resultType="int">
         SELECT count(*) FROM category
     </select>
+
+    <insert id="add" keyProperty="id" useGeneratedKeys="true" parameterType="Category">
+        INSERT INTO category ( name ) VALUES (#{name})
+    </insert>
 </mapper>
