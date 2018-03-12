@@ -1,41 +1,41 @@
--- DROP DATABASE IF EXISTS tmall_ssm;
--- CREATE DATABASE tmall_ssm DEFAULT CHARACTER SET utf8;
-
-
-CREATE TABLE user(
-	id int(11) NOT NULL auto_increment,
-    name varchar(255) DEFAULT NULL,
-    password varchar(255) DEFAULT NULL,
-    PRIMARY KEY (id)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE category(
-	id int(11) NOT NULL auto_increment,
-    name varchar(255) NOT NULL,
-    PRIMARY KEY (id)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE property(
-	id int(11) NOT NULL auto_increment,
-    cid int(11) DEFAULT NULL,
-    name varchar(255) DEFAULT NULL,
-    PRIMARY KEY (id),
-    CONSTRAINT fk_property_category FOREIGN KEY (cid) references category (id)
-    )ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
+DROP DATABASE IF EXISTS tmall_ssm;
+CREATE DATABASE tmall_ssm DEFAULT CHARACTER SET utf8;
+USE tmall_ssm;
+ 
+CREATE TABLE user (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  name varchar(255) DEFAULT NULL,
+  password varchar(255) DEFAULT NULL,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+ 
+CREATE TABLE category (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  name varchar(255) DEFAULT NULL,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+ 
+CREATE TABLE property (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  cid int(11) DEFAULT NULL,
+  name varchar(255) DEFAULT NULL,
+  PRIMARY KEY (id),
+  CONSTRAINT fk_property_category FOREIGN KEY (cid) REFERENCES category (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+ 
 CREATE TABLE product (
-	id int(11) NOT NULL auto_increment,
-    name varchar(255) DEFAULT NULL,
-    subTitle varchar(255) DEFAULT NULL,
-    originalPrice float DEFAULT NULL,
-    promotePrice float DEFAULT NULL,
-    stock int(11) DEFAULT NULL,
-    cid int(11) DEFAULT NULL,
-    createDate datetime DEFAULT NULL,
-    PRIMARY KEY (id),
-    constraint _product_category foreign key (cid) references category (id)
-    )ENGINE=InnoDB DEFAULT CHARSET=utf8;
-    
+  id int(11) NOT NULL AUTO_INCREMENT,
+  name varchar(255) DEFAULT NULL,
+  subTitle varchar(255) DEFAULT NULL,
+  originalPrice float DEFAULT NULL,
+  promotePrice float DEFAULT NULL,
+  stock int(11) DEFAULT NULL,
+  cid int(11) DEFAULT NULL,
+  createDate datetime DEFAULT NULL,
+  PRIMARY KEY (id),
+  CONSTRAINT fk_product_category FOREIGN KEY (cid) REFERENCES category (id)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+ 
 CREATE TABLE propertyvalue (
   id int(11) NOT NULL AUTO_INCREMENT,
   pid int(11) DEFAULT NULL,
@@ -45,7 +45,7 @@ CREATE TABLE propertyvalue (
   CONSTRAINT fk_propertyvalue_property FOREIGN KEY (ptid) REFERENCES property (id),
   CONSTRAINT fk_propertyvalue_product FOREIGN KEY (pid) REFERENCES product (id)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
-    
+ 
 CREATE TABLE productimage (
   id int(11) NOT NULL AUTO_INCREMENT,
   pid int(11) DEFAULT NULL,
@@ -53,7 +53,7 @@ CREATE TABLE productimage (
   PRIMARY KEY (id),
   CONSTRAINT fk_productimage_product FOREIGN KEY (pid) REFERENCES product (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
+ 
 CREATE TABLE review (
   id int(11) NOT NULL AUTO_INCREMENT,
   content varchar(4000) DEFAULT NULL,
@@ -64,7 +64,7 @@ CREATE TABLE review (
   CONSTRAINT fk_review_product FOREIGN KEY (pid) REFERENCES product (id),
     CONSTRAINT fk_review_user FOREIGN KEY (uid) REFERENCES user (id)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
-
+ 
 CREATE TABLE order_ (
   id int(11) NOT NULL AUTO_INCREMENT,
   orderCode varchar(255) DEFAULT NULL,
@@ -82,8 +82,7 @@ CREATE TABLE order_ (
   PRIMARY KEY (id),
   CONSTRAINT fk_order_user FOREIGN KEY (uid) REFERENCES user (id)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
-
-
+ 
 CREATE TABLE orderitem (
   id int(11) NOT NULL AUTO_INCREMENT,
   pid int(11) DEFAULT NULL,
@@ -95,21 +94,3 @@ CREATE TABLE orderitem (
   CONSTRAINT fk_orderitem_product FOREIGN KEY (pid) REFERENCES product (id),
   CONSTRAINT fk_orderitem_order FOREIGN KEY (oid) REFERENCES order_ (id)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
