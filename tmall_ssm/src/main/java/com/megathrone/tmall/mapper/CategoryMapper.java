@@ -6,9 +6,10 @@ import com.megathrone.tmall.util.Page;
 import java.util.List;
 
 public interface CategoryMapper {
-    List<Category> list(Page page);
 
-    public int total();
+    //重构方法
+    List<Category> list();
+
 
     void add(Category category);
 
