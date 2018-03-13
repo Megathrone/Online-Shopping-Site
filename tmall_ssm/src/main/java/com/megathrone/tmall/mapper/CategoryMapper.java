@@ -1,21 +1,21 @@
 package com.megathrone.tmall.mapper;
 
 import com.megathrone.tmall.pojo.Category;
-import com.megathrone.tmall.util.Page;
-
+import com.megathrone.tmall.pojo.CategoryExample;
 import java.util.List;
 
 public interface CategoryMapper {
+    int deleteByPrimaryKey(Integer id);
 
-    //重构方法
-    List<Category> list();
+    int insert(Category record);
 
+    int insertSelective(Category record);
 
-    void add(Category category);
+    List<Category> selectByExample(CategoryExample example);
 
-    void delete(int id);
+    Category selectByPrimaryKey(Integer id);
 
-    Category get(int id);
+    int updateByPrimaryKeySelective(Category record);
 
-    void update(Category category);
+    int updateByPrimaryKey(Category record);
 }
