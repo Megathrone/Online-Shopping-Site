@@ -11,4 +11,5 @@ public interface UserService {
     void update(User c);
     User get(int id);
     List list();
+    boolean isExist(String name);
 }
