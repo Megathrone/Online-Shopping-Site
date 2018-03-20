@@ -80,4 +80,11 @@ public class ForeController {
         session.setAttribute("user",user);
         return "redirect:forehome";
     }
+
+    //退出登录
+    @RequestMapping("forelogout")
+    public String logout(HttpSession session){
+        session.setAttribute("user");
+        return "redirect:forehome";
+    }
 }
