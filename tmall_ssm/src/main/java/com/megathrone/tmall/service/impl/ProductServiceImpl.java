@@ -4,11 +4,14 @@ import com.megathrone.tmall.mapper.ProductMapper;
 import com.megathrone.tmall.pojo.Category;
 import com.megathrone.tmall.pojo.Product;
 import com.megathrone.tmall.pojo.ProductExample;
+import com.megathrone.tmall.pojo.ProductImage;
 import com.megathrone.tmall.service.CategoryService;
+import com.megathrone.tmall.service.ProductImageService;
 import com.megathrone.tmall.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -18,6 +21,9 @@ public class ProductServiceImpl implements ProductService{
     ProductMapper productMapper;
     @Autowired
     CategoryService categoryService;
+    @Autowired
+    ProductImageService productImageService;
+
 
     @Override
     public void add(Product p) {
@@ -50,6 +56,37 @@ public class ProductServiceImpl implements ProductService{
         setCategory(result);
         return result;
     }
+
+    @Override
+    public void fill(Category c) {
+        List<Product> ps = list(c.getId());
+        c.setProducts(ps);
+    }
+
+    @Override
+    public void fill(List<Category> cs) {
+        for (Category c : cs) {
+            fill(c);
+        }
+    }
+
+    @Override
+    public void fillByRow(List<Category> cs) {
+        int productNumberEachRow = 8;
+        for(Category c:cs){
+            List<Product> products = c.getProducts();
+            List<List<Product>> productsByRow = new ArrayList<>();
+            for(int i=0;i<products.size();i+=productNumberEachRow){
+                int size = i +productNumberEachRow;
+                size = size > products.size() ? products.size() : size;
+                List<Product> productsOfEachRow = products.subList(i,size);
+                productsByRow.add(productsOfEachRow);
+            }
+            c.setProductsByRow(productsByRow);
+        }
+    }
+
+
 
     public void setCategory(List<Product> ps){
         for(Product p : ps){
