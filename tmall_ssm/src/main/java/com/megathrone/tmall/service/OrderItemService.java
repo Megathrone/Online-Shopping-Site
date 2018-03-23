@@ -1,11 +1,13 @@
 package com.megathrone.tmall.service;
 
-
-import com.megathrone.tmall.pojo.*;
-
 import java.util.List;
 
+import com.megathrone.tmall.pojo.Order;
+import com.megathrone.tmall.pojo.OrderItem;
+
 public interface OrderItemService {
+
+
     void add(OrderItem c);
 
     void delete(int id);
@@ -16,4 +18,6 @@ public interface OrderItemService {
     void fill(List<Order> os);
 
     void fill(Order o);
+
+    int getSaleCount(int  pid);
 }
