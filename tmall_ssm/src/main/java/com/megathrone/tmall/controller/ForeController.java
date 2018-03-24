@@ -1,7 +1,7 @@
 package com.megathrone.tmall.controller;
 
+import com.comparator.*;
 import com.github.pagehelper.PageHelper;
-import com.megathrone.tmall.comparator.*;
 import com.megathrone.tmall.pojo.*;
 import com.megathrone.tmall.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +35,10 @@ public class ForeController {
     OrderItemService orderItemService;
     @Autowired
     ReviewService reviewService;
+
     @RequestMapping("forehome")
     public String home(Model model) {
-        List<Category> cs= categoryService.list();
+        List<Category> cs = categoryService.list();
         productService.fill(cs);
         productService.fillByRow(cs);
         model.addAttribute("cs", cs);
@@ -45,15 +46,16 @@ public class ForeController {
     }
 
     @RequestMapping("foreregister")
-    public String register(Model model,User user) {
-        String name =  user.getName();
+    public String register(Model model, User user) {
+        String name = user.getName();
         name = HtmlUtils.htmlEscape(name);
         user.setName(name);
         boolean exist = userService.isExist(name);
 
-        if(exist){
-            String m ="用户名已经被使用,不能使用";
+        if (exist) {
+            String m = "用户名已经被使用,不能使用";
             model.addAttribute("msg", m);
+
 
             return "fore/register";
         }
@@ -61,26 +63,28 @@ public class ForeController {
 
         return "redirect:registerSuccessPage";
     }
+
     @RequestMapping("forelogin")
     public String login(@RequestParam("name") String name, @RequestParam("password") String password, Model model, HttpSession session) {
         name = HtmlUtils.htmlEscape(name);
-        User user = userService.get(name,password);
+        User user = userService.get(name, password);
 
-        if(null==user){
+        if (null == user) {
             model.addAttribute("msg", "账号密码错误");
             return "fore/login";
         }
         session.setAttribute("user", user);
         return "redirect:forehome";
     }
+
     @RequestMapping("forelogout")
-    public String logout( HttpSession session) {
+    public String logout(HttpSession session) {
         session.removeAttribute("user");
         return "redirect:forehome";
     }
 
     @RequestMapping("foreproduct")
-    public String product( int pid, Model model) {
+    public String product(int pid, Model model) {
         Product p = productService.get(pid);
 
         List<ProductImage> productSingleImages = productImageService.list(p.getId(), ProductImageService.type_single);
@@ -100,49 +104,51 @@ public class ForeController {
 
     @RequestMapping("forecheckLogin")
     @ResponseBody
-    public String checkLogin( HttpSession session) {
-        User user =(User)  session.getAttribute("user");
-        if(null!=user)
+    public String checkLogin(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (null != user)
             return "success";
         return "fail";
     }
+
     @RequestMapping("foreloginAjax")
     @ResponseBody
-    public String loginAjax(@RequestParam("name") String name, @RequestParam("password") String password,HttpSession session) {
+    public String loginAjax(@RequestParam("name") String name, @RequestParam("password") String password, HttpSession session) {
         name = HtmlUtils.htmlEscape(name);
-        User user = userService.get(name,password);
+        User user = userService.get(name, password);
 
-        if(null==user){
+        if (null == user) {
             return "fail";
         }
         session.setAttribute("user", user);
         return "success";
     }
+
     @RequestMapping("forecategory")
-    public String category(int cid,String sort, Model model) {
+    public String category(int cid, String sort, Model model) {
         Category c = categoryService.get(cid);
         productService.fill(c);
         productService.setSaleAndReviewNumber(c.getProducts());
 
-        if(null!=sort){
-            switch(sort){
+        if (null != sort) {
+            switch (sort) {
                 case "review":
-                    Collections.sort(c.getProducts(),new ProductReviewComparator());
+                    Collections.sort(c.getProducts(), new ProductReviewComparator());
                     break;
-                case "date" :
-                    Collections.sort(c.getProducts(),new ProductDateComparator());
+                case "date":
+                    Collections.sort(c.getProducts(), new ProductDateComparator());
                     break;
 
-                case "saleCount" :
-                    Collections.sort(c.getProducts(),new ProductSaleCountComparator());
+                case "saleCount":
+                    Collections.sort(c.getProducts(), new ProductSaleCountComparator());
                     break;
 
                 case "price":
-                    Collections.sort(c.getProducts(),new ProductPriceComparator());
+                    Collections.sort(c.getProducts(), new ProductPriceComparator());
                     break;
 
                 case "all":
-                    Collections.sort(c.getProducts(),new ProductAllComparator());
+                    Collections.sort(c.getProducts(), new ProductAllComparator());
                     break;
             }
         }
@@ -152,12 +158,43 @@ public class ForeController {
     }
 
     @RequestMapping("foresearch")
-    public String search( String keyword,Model model){
+    public String search(String keyword, Model model) {
 
-        PageHelper.offsetPage(0,20);
-        List<Product> ps= productService.search(keyword);
+        PageHelper.offsetPage(0, 20);
+        List<Product> ps = productService.search(keyword);
         productService.setSaleAndReviewNumber(ps);
-        model.addAttribute("ps",ps);
+        model.addAttribute("ps", ps);
         return "fore/searchResult";
     }
+
+    @RequestMapping("forebuyone")
+    public String buyone(int pid, int num, HttpSession session) {
+        Product p = productService.get(pid);
+        int oiid = 0;
+
+        User user = (User) session.getAttribute("user");
+        boolean found = false;
+        List<OrderItem> ois = orderItemService.listByUser(user.getId());
+        for (OrderItem oi : ois) {
+            if (oi.getProduct().getId().intValue() == p.getId().intValue()) {
+                oi.setNumber(oi.getNumber() + num);
+                orderItemService.update(oi);
+                found = true;
+                oiid = oi.getId();
+                break;
+            }
+        }
+
+        if (!found) {
+            OrderItem oi = new OrderItem();
+            oi.setUid(user.getId());
+            oi.setNumber(num);
+            oi.setPid(pid);
+            orderItemService.add(oi);
+            oiid = oi.getId();
+        }
+        return "redirect:forebuy?oiid=" + oiid;
+    }
+
 }
+

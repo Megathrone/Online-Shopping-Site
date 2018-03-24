@@ -1,4 +1,4 @@
-package com.megathrone.tmall.comparator;
+package com.comparator;
 
 import com.megathrone.tmall.pojo.Product;
 
