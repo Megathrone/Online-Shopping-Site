@@ -16,6 +16,7 @@ import com.megathrone.tmall.service.OrderItemService;
 import com.megathrone.tmall.service.ProductImageService;
 import com.megathrone.tmall.service.ProductService;
 import com.megathrone.tmall.service.ReviewService;
+
 @Service
 public class ProductServiceImpl implements ProductService {
     @Autowired
@@ -51,7 +52,6 @@ public class ProductServiceImpl implements ProductService {
         setCategory(p);
         return p;
     }
-
 
     public void setCategory(List<Product> ps){
         for (Product p : ps)
@@ -120,6 +120,17 @@ public class ProductServiceImpl implements ProductService {
         for (Product p : ps) {
             setSaleAndReviewNumber(p);
         }
+    }
+
+    @Override
+    public List<Product> search(String keyword) {
+        ProductExample example = new ProductExample();
+        example.createCriteria().andNameLike("%" + keyword + "%");
+        example.setOrderByClause("id desc");
+        List result = productMapper.selectByExample(example);
+        setFirstProductImage(result);
+        setCategory(result);
+        return result;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.megathrone.tmall.controller;
 
+import com.github.pagehelper.PageHelper;
 import com.megathrone.tmall.comparator.*;
 import com.megathrone.tmall.pojo.*;
 import com.megathrone.tmall.service.*;
@@ -34,13 +35,12 @@ public class ForeController {
     OrderItemService orderItemService;
     @Autowired
     ReviewService reviewService;
-
     @RequestMapping("forehome")
     public String home(Model model) {
         List<Category> cs= categoryService.list();
         productService.fill(cs);
         productService.fillByRow(cs);
-         model.addAttribute("cs", cs);
+        model.addAttribute("cs", cs);
         return "fore/home";
     }
 
@@ -50,11 +50,10 @@ public class ForeController {
         name = HtmlUtils.htmlEscape(name);
         user.setName(name);
         boolean exist = userService.isExist(name);
-        
+
         if(exist){
             String m ="用户名已经被使用,不能使用";
             model.addAttribute("msg", m);
-
 
             return "fore/register";
         }
@@ -101,29 +100,26 @@ public class ForeController {
 
     @RequestMapping("forecheckLogin")
     @ResponseBody
-    public String checkLogin(HttpSession session){
-        User user = (User) session.getAttribute("user");
-        if(null!=user){
+    public String checkLogin( HttpSession session) {
+        User user =(User)  session.getAttribute("user");
+        if(null!=user)
             return "success";
-        }
         return "fail";
     }
-
     @RequestMapping("foreloginAjax")
     @ResponseBody
-    public String loginAjax(@RequestParam("name") String name, @RequestParam("password") String password,
-                            HttpSession session){
+    public String loginAjax(@RequestParam("name") String name, @RequestParam("password") String password,HttpSession session) {
         name = HtmlUtils.htmlEscape(name);
         User user = userService.get(name,password);
-        if(null == user){
+
+        if(null==user){
             return "fail";
         }
-        session.setAttribute("user",user);
+        session.setAttribute("user", user);
         return "success";
     }
-
     @RequestMapping("forecategory")
-    public String category(int cid,String sort,Model model){
+    public String category(int cid,String sort, Model model) {
         Category c = categoryService.get(cid);
         productService.fill(c);
         productService.setSaleAndReviewNumber(c.getProducts());
@@ -151,8 +147,17 @@ public class ForeController {
             }
         }
 
-        model.addAttribute("c",c);
+        model.addAttribute("c", c);
         return "fore/category";
     }
 
+    @RequestMapping("foresearch")
+    public String search( String keyword,Model model){
+
+        PageHelper.offsetPage(0,20);
+        List<Product> ps= productService.search(keyword);
+        productService.setSaleAndReviewNumber(ps);
+        model.addAttribute("ps",ps);
+        return "fore/searchResult";
+    }
 }
