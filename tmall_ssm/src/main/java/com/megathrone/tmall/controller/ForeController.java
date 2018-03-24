@@ -97,4 +97,27 @@ public class ForeController {
         return "fore/product";
     }
 
+    @RequestMapping("forecheckLogin")
+    @ResponseBody
+    public String checkLogin(HttpSession session){
+        User user = (User) session.getAttribute("user");
+        if(null!=user){
+            return "success";
+        }
+        return "fail";
+    }
+
+    @RequestMapping("foreloginAjax")
+    @ResponseBody
+    public String loginAjax(@RequestParam("name") String name, @RequestParam("password") String password,
+                            HttpSession session){
+        name = HtmlUtils.htmlEscape(name);
+        User user = userService.get(name,password);
+        if(null == user){
+            return "fail";
+        }
+        session.setAttribute("user",user);
+        return "success";
+    }
+
 }
