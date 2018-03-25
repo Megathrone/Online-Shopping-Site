@@ -17,14 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-public class OrderServiceImpl implements OrderService{
-
+public class OrderServiceImpl implements OrderService {
     @Autowired
     OrderMapper orderMapper;
 
     @Autowired
     UserService userService;
-
     @Autowired
     OrderItemService orderItemService;
 
@@ -51,10 +49,20 @@ public class OrderServiceImpl implements OrderService{
     public List<Order> list(){
         OrderExample example =new OrderExample();
         example.setOrderByClause("id desc");
-        List<Order> result =orderMapper.selectByExample(example);
-        setUser(result);
-        return result;
+        return orderMapper.selectByExample(example);
+
     }
+
+    @Override
+    public List list(int uid, String excludedStatus) {
+        OrderExample example =new OrderExample();
+        example.createCriteria().andUidEqualTo(uid).andStatusNotEqualTo(excludedStatus);
+        example.setOrderByClause("id desc");
+        return orderMapper.selectByExample(example);
+    }
+
+    ;
+
     public void setUser(List<Order> os){
         for (Order o : os)
             setUser(o);
@@ -66,21 +74,21 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED,rollbackForClassName = "Exception")
+    @Transactional(propagation= Propagation.REQUIRED,rollbackForClassName="Exception")
+
     public float add(Order o, List<OrderItem> ois) {
         float total = 0;
         add(o);
 
-        // test if happen transaction
-        if(false){
+        if(false)
             throw new RuntimeException();
-        }
 
-        for(OrderItem oi: ois){
+        for (OrderItem oi: ois) {
             oi.setOid(o.getId());
             orderItemService.update(oi);
-            total += oi.getProduct().getPromotePrice() * oi.getNumber();
+            total+=oi.getProduct().getPromotePrice()*oi.getNumber();
         }
         return total;
     }
+
 }
