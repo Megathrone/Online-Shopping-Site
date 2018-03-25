@@ -7,3 +7,6 @@ Requirement analysis:
 - [Back-end analysis](https://github.com/Megathrone/Online-Shopping-Site/blob/master/Requirement%20analysis/Back-end%20analysis.md)
 
 
+
+
+**Version 1.0 is completed at 2018.03.25**
