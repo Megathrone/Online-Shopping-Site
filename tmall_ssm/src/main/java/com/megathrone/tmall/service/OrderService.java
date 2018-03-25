@@ -1,6 +1,7 @@
 package com.megathrone.tmall.service;
 
 import com.megathrone.tmall.pojo.Order;
+import com.megathrone.tmall.pojo.OrderItem;
 
 import java.util.List;
 
@@ -18,4 +19,6 @@ public interface OrderService {
     void update(Order c);
     Order get(int id);
     List list();
+
+    float add(Order c, List<OrderItem> ois);
 }
