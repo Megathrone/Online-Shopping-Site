@@ -243,13 +243,60 @@ public class ForeController {
         return "success";
     }
 
-
+    //show all products in cart
     @RequestMapping("forecart")
     public String cart(Model model, HttpSession session){
         User user = (User) session.getAttribute("user");
         List<OrderItem> ois = orderItemService.listByUser(user.getId());
         model.addAttribute("ois",ois);
         return "fore/cart";
+    }
+
+
+    /**
+     *
+     * @param model
+     * @param session
+     * @param pid
+     * @param number
+     * @return : json
+     *
+     * Cart page manipulating : change
+     */
+    @RequestMapping("forechangeOrderItem")
+    @ResponseBody
+    public String changeOrderItem(Model model, HttpSession session, int pid, int number){
+        User user = (User) session.getAttribute("user");
+        if(null == user)
+            return "fail";
+        List<OrderItem> ois = orderItemService.listByUser(user.getId());
+        for (OrderItem oi: ois) {
+            if(oi.getProduct().getId().intValue() == pid){
+                oi.setNumber(number);
+                orderItemService.update(oi);
+                break;
+            }
+        }
+        return "success";
+    }
+
+    /**
+     *
+     * @param model
+     * @param session
+     * @param oiid
+     * @return json
+     *
+     * Cart page manipulating : delete
+     */
+    @RequestMapping("foredeleteOrderItem")
+    @ResponseBody
+    public String deleteOrderItem(Model model, HttpSession session, int oiid){
+        User user = (User) session.getAttribute("user");
+        if(null == user)
+            return "fail";
+        orderItemService.delete(oiid);
+        return "success";
     }
 }
 
