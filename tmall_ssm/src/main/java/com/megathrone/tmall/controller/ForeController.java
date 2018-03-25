@@ -320,19 +320,19 @@ public class ForeController {
     }
 
     @RequestMapping("forepayed")
-    public String payed(int oid, float total, Model model){
+    public String payed(int oid, float total, Model model) {
         Order order = orderService.get(oid);
         order.setStatus(OrderService.waitDelivery);
         order.setPayDate(new Date());
         orderService.update(order);
-        model.addAttribute("o",order);
+        model.addAttribute("o", order);
         return "fore/payed";
     }
 
     @RequestMapping("forebought")
-    public String bought( Model model,HttpSession session) {
-        User user =(User)  session.getAttribute("user");
-        List<Order> os= orderService.list(user.getId(),OrderService.delete);
+    public String bought(Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        List<Order> os = orderService.list(user.getId(), OrderService.delete);
 
         orderItemService.fill(os);
 
@@ -341,6 +341,33 @@ public class ForeController {
         return "fore/bought";
     }
 
+    @RequestMapping("foreconfirmPay")
+    public String confirmPay(int oid, Model model) {
+        Order o = orderService.get(oid);
+        orderItemService.fill(o);
+        model.addAttribute("o", o);
+        return "fore/confirmPay";
+    }
 
+    @RequestMapping("foreorderConfirmed")
+    public String orderConfirmed(Model model, int oid) {
+        Order o = orderService.get(oid);
+        o.setStatus(OrderService.waitReview);
+        o.setConfirmDate(new Date());
+        orderService.update(o);
+        return "fore/orderConfirmed";
+    }
+
+    @RequestMapping("foredeleteOrder")
+    @ResponseBody
+    public String deleteOrder(Model model, int oid) {
+        Order o = orderService.get(oid);
+        o.setStatus(OrderService.delete);
+        orderService.update(o);
+        return "success";
+    }
 }
+
+
+
 
