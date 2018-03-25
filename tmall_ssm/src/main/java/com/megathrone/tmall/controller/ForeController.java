@@ -215,7 +215,7 @@ public class ForeController {
     }
 
     @RequestMapping("foreaddCart")
-    public String addCart(int pid, int num, Model model, HttpSession session){
+    public String addCart(int pid, int num, Model model, HttpSession session) {
         // Get a product from according to pid
         Product p = productService.get(pid);
 
@@ -223,8 +223,8 @@ public class ForeController {
         boolean found = false;
 
         List<OrderItem> ois = orderItemService.listByUser(user.getId());
-        for(OrderItem oi : ois){
-            if(oi.getProduct().getId().intValue() == p.getId().intValue()){
+        for (OrderItem oi : ois) {
+            if (oi.getProduct().getId().intValue() == p.getId().intValue()) {
                 oi.setNumber(oi.getNumber() + num);
                 orderItemService.update(oi);
                 found = false;
@@ -232,7 +232,7 @@ public class ForeController {
             }
         }
 
-        if(!found){
+        if (!found) {
             OrderItem oi = new OrderItem();
             oi.setUid(user.getId());
             oi.setPid(pid);
@@ -243,5 +243,13 @@ public class ForeController {
         return "success";
     }
 
+
+    @RequestMapping("forecart")
+    public String cart(Model model, HttpSession session){
+        User user = (User) session.getAttribute("user");
+        List<OrderItem> ois = orderItemService.listByUser(user.getId());
+        model.addAttribute("ois",ois);
+        return "fore/cart";
+    }
 }
 
